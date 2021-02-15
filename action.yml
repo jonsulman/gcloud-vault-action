@@ -1,0 +1,21 @@
+name: 'Vault GCloud Action'
+description: 'Authenticates to gcloud via Vault and then runs the provided script'
+inputs:
+    vaultUrl:
+        description: 'Vault URL'
+        required: true
+    roleId:
+        description: 'Role to authenticate to vault with'
+        required: true
+    secretId:
+        description: 'Secret associated with role provided'
+        required: true
+    rolesetPath:
+        description: 'Path to the GCP roleset in Vault'
+        required: true
+    script:
+        description: 'script to run'
+        required: true
+runs:
+    using: 'node12'
+    main: 'dist/index.js'

@@ -1,0 +1,31 @@
+{
+  "name": "gcloud-vault-action",
+  "version": "0.0.1",
+  "description": "Authenticate to gcloud via vault, and execute scripts",
+  "main": "src/index.js",
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "axios": "^0.21.1"
+  },
+  
+  "devDependencies": {},
+  "scripts": {
+    "build": "ncc build src/index.js -o dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GeneralMills/gcloud-vault-action.git"
+  },
+  "keywords": [
+    "github",
+    "action",
+    "vault",
+    "gcloud"
+  ],
+  "author": "Eric Bartusch",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/GeneralMills/gcloud-vault-action/issues"
+  },
+  "homepage": "https://github.com/GeneralMills/gcloud-vault-action#readme"
+}
