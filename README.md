@@ -16,7 +16,7 @@ This method will take a Vault credential, authenticate to Vault, and get a priva
 ## Example
 
 ```yaml
-uses: GeneralMills/gcloud-vault-action
+uses: GeneralMills/gcloud-vault-action@main
     with:
     vaultUrl: ${{ env.VAULT_URL }}
     roleId: ${{ secrets.ROLE_ID }}
