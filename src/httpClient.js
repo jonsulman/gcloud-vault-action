@@ -13,7 +13,8 @@ async function request(url, method, payload, headers, vaultCert) {
     const response = await axios(config);
     return response;
   } catch (error) {
-    console.error(error);
+    console.error(error.message);
+    return error.response;
   }
 }
 

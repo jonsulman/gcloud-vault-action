@@ -70,6 +70,7 @@ async function getVaultToken(vaultUrl, vaultAuthPayload) {
   var statusCode = authResponse.status;
   if (statusCode >= 400) {
     core.setFailed(`Failed to login via the provided approle with status code: ${statusCode}`);
+    process.exit(1);
   }
 
   var data = authResponse.data;
@@ -87,7 +88,8 @@ async function getLeaseAndKey(vaultUrl, rolesetPath, vaultToken) {
 
   var statusCode = serviceAccountResponse.status;
   if (statusCode >= 400) {
-    core.setFailed(`Failed to access provided rolset path with status code: ${statusCode}`);
+    core.setFailed(`Failed to access provided roleset path with status code: ${statusCode}`);
+    process.exit(1);
   }
 
   var saData = serviceAccountResponse.data;
