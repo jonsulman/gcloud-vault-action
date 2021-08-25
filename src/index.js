@@ -36,6 +36,7 @@ async function main() {
 
     // execute provided script
     console.log(`Executing script: ${script}`);
+    console.log(`test`);
     try {
       execSync(script);
     } catch (error) {
