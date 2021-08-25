@@ -36,15 +36,12 @@ async function main() {
 
     // execute provided script
     console.log(`Executing script: ${script}`);
-    execSync(script, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        throw error;
-      }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
-    });
-
+    try {
+      execSync(script);
+    } catch (error) {
+      console.error(`status: ${error.status}`);
+      console.error(`message: ${error.message}`);
+    }
     // delete key json file
     fs.unlinkSync('sa-key.json', (error) => {
       if (error) throw error;
