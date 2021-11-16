@@ -3107,7 +3107,7 @@ async function getVaultToken(vaultUrl, vaultAuthPayload) {
 }
 
 async function getLeaseAndKey(vaultUrl, rolesetPath, vaultToken) {
-  core.loinfog(`Activating service account`);
+  core.info(`Activating service account`);
   const serviceAccountResponse = await request(
     `${vaultUrl}/v1/${rolesetPath}`,
     "GET",
