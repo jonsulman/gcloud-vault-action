@@ -59,7 +59,7 @@ async function main() {
 }
 
 async function getVaultToken(vaultUrl, vaultAuthPayload) {
-  core.log(`Authenticating to vault`);
+  core.info(`Authenticating to vault`);
   const authResponse = await request(
     `${vaultUrl}/v1/auth/approle/login`,
     "POST",
@@ -78,7 +78,7 @@ async function getVaultToken(vaultUrl, vaultAuthPayload) {
 }
 
 async function getLeaseAndKey(vaultUrl, rolesetPath, vaultToken) {
-  core.log(`Activating service account`);
+  core.loinfog(`Activating service account`);
   const serviceAccountResponse = await request(
     `${vaultUrl}/v1/${rolesetPath}`,
     "GET",
@@ -99,7 +99,7 @@ async function getLeaseAndKey(vaultUrl, rolesetPath, vaultToken) {
 }
 
 async function revokeLease(vaultUrl, leaseId, vaultToken) {
-  core.log(`Revoking lease ${leaseId}`);
+  core.info(`Revoking lease ${leaseId}`);
   const revokeResponse = await request(
     `${vaultUrl}/v1/sys/leases/revoke`,
     "PUT",
@@ -109,11 +109,11 @@ async function revokeLease(vaultUrl, leaseId, vaultToken) {
 
   var statusCode = revokeResponse.status;
   if (statusCode == 204) {
-    core.log(`Successfully revoked lease: ${leaseId}`);
+    core.info(`Successfully revoked lease: ${leaseId}`);
   }
   else {
     // technically the entire script still executed, but the lease is still hanging around, so don't fail the whole run
-    core.log(`Failed to revoke key with ${statusCode} on lease: ${leaseId}`);
+    core.info(`Failed to revoke key with ${statusCode} on lease: ${leaseId}`);
   }
 }
 
