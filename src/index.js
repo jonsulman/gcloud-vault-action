@@ -27,22 +27,22 @@ async function main() {
     // auth to GCP with service account
     execSync('gcloud auth activate-service-account --key-file sa-key.json', (error, stdout, stderr) => {
       if (error) {
-        console.error(`exec error: ${error}`);
+        core.error(`exec error: ${error}`);
         throw error;
       }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
+      core.log(`stdout: ${stdout}`);
+      core.error(`stderr: ${stderr}`);
     });
 
     // execute provided script
-    console.log(`Executing script: ${script}`);
+    core.log(`Executing script: ${script}`);
     execSync(script, (error, stdout, stderr) => {
       if (error) {
-        console.error(`exec error: ${error}`);
+        core.error(`exec error: ${error}`);
         throw error;
       }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
+      core.log(`stdout: ${stdout}`);
+      core.error(`stderr: ${stderr}`);
     });
 
     // delete key json file
@@ -59,7 +59,7 @@ async function main() {
 }
 
 async function getVaultToken(vaultUrl, vaultAuthPayload) {
-  console.log(`Authenticating to vault`);
+  core.log(`Authenticating to vault`);
   const authResponse = await request(
     `${vaultUrl}/v1/auth/approle/login`,
     "POST",
@@ -78,7 +78,7 @@ async function getVaultToken(vaultUrl, vaultAuthPayload) {
 }
 
 async function getLeaseAndKey(vaultUrl, rolesetPath, vaultToken) {
-  console.log(`Activating service account`);
+  core.log(`Activating service account`);
   const serviceAccountResponse = await request(
     `${vaultUrl}/v1/${rolesetPath}`,
     "GET",
@@ -99,7 +99,7 @@ async function getLeaseAndKey(vaultUrl, rolesetPath, vaultToken) {
 }
 
 async function revokeLease(vaultUrl, leaseId, vaultToken) {
-  console.log(`Revoking lease ${leaseId}`);
+  core.log(`Revoking lease ${leaseId}`);
   const revokeResponse = await request(
     `${vaultUrl}/v1/sys/leases/revoke`,
     "PUT",
@@ -109,11 +109,11 @@ async function revokeLease(vaultUrl, leaseId, vaultToken) {
 
   var statusCode = revokeResponse.status;
   if (statusCode == 204) {
-    console.log(`Successfully revoked lease: ${leaseId}`);
+    core.log(`Successfully revoked lease: ${leaseId}`);
   }
   else {
     // technically the entire script still executed, but the lease is still hanging around, so don't fail the whole run
-    console.log(`Failed to revoke key with ${statusCode} on lease: ${leaseId}`);
+    core.log(`Failed to revoke key with ${statusCode} on lease: ${leaseId}`);
   }
 }
 
