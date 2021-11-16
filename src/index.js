@@ -30,18 +30,18 @@ async function main() {
         core.error(`exec error: ${error}`);
         throw error;
       }
-      core.log(`stdout: ${stdout}`);
+      core.info(`stdout: ${stdout}`);
       core.error(`stderr: ${stderr}`);
     });
 
     // execute provided script
-    core.log(`Executing script: ${script}`);
+    core.info(`Executing script: ${script}`);
     execSync(script, (error, stdout, stderr) => {
       if (error) {
         core.error(`exec error: ${error}`);
         throw error;
       }
-      core.log(`stdout: ${stdout}`);
+      core.info(`stdout: ${stdout}`);
       core.error(`stderr: ${stderr}`);
     });
 
