@@ -2,6 +2,7 @@ const core = require("@actions/core");
 const request  = require('./httpClient');
 const fs = require('fs');
 const { execSync } = require("child_process");
+const { stdout, stderr } = require("process");
 
 async function main() {
 
@@ -11,6 +12,7 @@ async function main() {
   const secretId = core.getInput('secretId', { required: true });
   const rolesetPath = core.getInput('rolesetPath', { required: true });
   const script = core.getInput('script', { required: true });
+  const exportAsEnvVariable = core.getInput('exportAsEnvVariable', { required: false });
   const vaultAuthPayload = `{"role_id": "${roleId}", "secret_id": "${secretId}"}`;
 
   // authenticate to vault
@@ -41,9 +43,27 @@ async function main() {
         console.error(`exec error: ${error}`);
         throw error;
       }
+      if ((exportAsEnvVariable) && script.includes('|') && stdout){
+        core.exportVariable(script.split('|')[1].trim(),stdout.trim())
+      }
       console.log(`stdout: ${stdout}`);
       console.error(`stderr: ${stderr}`);
     });
+
+    // execute provided script and set the value from the script to an environment Variable
+    if (scriptWithReturn) {
+      console.log(`Executing script: ${scriptWithReturn}`);
+      execSync(scriptWithReturn, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`)
+        }
+        console.error(`stderr: ${stderr}`);
+        if (exportEnv){
+          core.exportVariable(scriptWithReturn.split('|')[1].trim(),stdout.trim())
+        }
+        
+      });
+    }
 
     // delete key json file
     fs.unlinkSync('sa-key.json', (error) => {

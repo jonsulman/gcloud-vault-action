@@ -16,6 +16,10 @@ inputs:
     script:
         description: 'script to run'
         required: true
+    exportAsEnvVariable:
+        description: 'export the output of the script into an environment variable passed in the script with a pipe separator'
+        required: false
+        default: 'false'
 runs:
     using: 'node12'
     main: 'dist/index.js'
