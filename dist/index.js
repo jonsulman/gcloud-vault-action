@@ -4666,7 +4666,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(1907);
 const request  = __nccwpck_require__(4338);
 const fs = __nccwpck_require__(7147);
-const { execSync } = __nccwpck_require__(2081);
+const { exec, execSync } = __nccwpck_require__(2081);
 const { stdout, stderr } = __nccwpck_require__(7282);
 
 async function main() {
@@ -4701,33 +4701,19 @@ async function main() {
       console.error(`stderr: ${stderr}`);
     });
 
-    //testing if executing the actions in a single step works
-    if (script.includes(';')){
-      const setVariableScript = script.split(';')[0].trim();
-      const execScript = script.split(';')[1].trim();
-      const scriptPart = setVariableScript.split('|')[0].trim();
+    if ((exportAsEnvVariable) && script.includes('|')) {
+      const scriptPart = script.split('|')[0].trim();
       console.log(`Executing script: ${scriptPart}`);
-      execSync(scriptPart, (error, stdout, stderr) => {
+      // execute provided script and set the value from the script to an Environment Variable
+      exec(scriptPart, (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);
         }
         console.error(`stderr: ${stderr}`);
         if (stdout){
-          core.exportVariable(setVariableScript.split('|')[1].trim(),stdout.trim())
+          core.exportVariable(script.split('|')[1].trim(),stdout.trim());
         }        
-      })
-
-      // execute provided script
-      console.log(`Executing script: ${execScript}`);
-      execSync(execScript, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`);
-          throw error;
-        }
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
-      });
-
+      }) 
     } else {
       // execute provided script
       console.log(`Executing script: ${script}`);
@@ -4740,7 +4726,6 @@ async function main() {
         console.error(`stderr: ${stderr}`);
       });
     }
-    
 
     // delete key json file
     fs.unlinkSync('sa-key.json', (error) => {
