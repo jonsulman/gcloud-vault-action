@@ -36,19 +36,33 @@ async function main() {
       console.error(`stderr: ${stderr}`);
     });
 
-    if ((exportAsEnvVariable) && script.includes('|')) {
-      const scriptPart = script.split('|')[0].trim();
+    //testing if executing the actions in a single step works
+    if (script.includes(';')){
+      const setVariableScript = script.split(';')[0].trim();
+      const execScript = script.split(';')[1].trim();
+      const scriptPart = setVariableScript.split('|')[0].trim();
       console.log(`Executing script: ${scriptPart}`);
-      // execute provided script and set the value from the script to an Environment Variable
       execSync(scriptPart, (error, stdout, stderr) => {
         if (error) {
           console.error(`exec error: ${error}`);
         }
         console.error(`stderr: ${stderr}`);
         if (stdout){
-          core.setOutput(script.split('|')[1].trim(),stdout.trim())
+          core.exportVariable(setVariableScript.split('|')[1].trim(),stdout.trim())
         }        
-      }) 
+      })
+
+      // execute provided script
+      console.log(`Executing script: ${execScript}`);
+      execSync(execScript, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          throw error;
+        }
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
+      });
+
     } else {
       // execute provided script
       console.log(`Executing script: ${script}`);
@@ -61,6 +75,7 @@ async function main() {
         console.error(`stderr: ${stderr}`);
       });
     }
+    
 
     // delete key json file
     fs.unlinkSync('sa-key.json', (error) => {
