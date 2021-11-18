@@ -36,32 +36,29 @@ async function main() {
       console.error(`stderr: ${stderr}`);
     });
 
-    // execute provided script
-    console.log(`Executing script: ${script}`);
-    execSync(script, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        throw error;
-      }
-      if ((exportAsEnvVariable) && script.includes('|') && stdout){
-        core.exportVariable(script.split('|')[1].trim(),stdout.trim())
-      }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
-    });
-
-    // execute provided script and set the value from the script to an environment Variable
-    if (scriptWithReturn) {
-      console.log(`Executing script: ${scriptWithReturn}`);
-      execSync(scriptWithReturn, (error, stdout, stderr) => {
+    if ((exportAsEnvVariable) && script.includes('|')) {
+      const scriptPart = script.split('|')[0].trim();
+      console.log(`Executing script: ${scriptPart}`);
+      // execute provided script and set the value from the script to an Environment Variable
+      execSync(scriptPart, (error, stdout, stderr) => {
         if (error) {
-          console.error(`exec error: ${error}`)
+          console.error(`exec error: ${error}`);
         }
         console.error(`stderr: ${stderr}`);
-        if (exportEnv){
-          core.exportVariable(scriptWithReturn.split('|')[1].trim(),stdout.trim())
+        if (stdout){
+          core.exportVariable(script.split('|')[1].trim(),stdout.trim());
+        }        
+      }) 
+    } else {
+      // execute provided script
+      console.log(`Executing script: ${script}`);
+      execSync(script, (error, stdout, stderr) => {
+        if (error) {
+          console.error(`exec error: ${error}`);
+          throw error;
         }
-        
+        console.log(`stdout: ${stdout}`);
+        console.error(`stderr: ${stderr}`);
       });
     }
 
