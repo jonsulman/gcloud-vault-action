@@ -46,7 +46,7 @@ async function main() {
         }
         console.error(`stderr: ${stderr}`);
         if (stdout){
-          core.exportVariable(script.split('|')[1].trim(),stdout.trim());
+          core.setOutput(script.split('|')[1].trim(),stdout.trim())
         }        
       }) 
     } else {
