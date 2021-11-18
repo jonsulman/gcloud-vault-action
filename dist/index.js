@@ -4666,7 +4666,7 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(1907);
 const request  = __nccwpck_require__(4338);
 const fs = __nccwpck_require__(7147);
-const { exec, execSync } = __nccwpck_require__(2081);
+const { execSync } = __nccwpck_require__(2081);
 const { stdout, stderr } = __nccwpck_require__(7282);
 
 async function main() {
@@ -4705,15 +4705,7 @@ async function main() {
       const scriptPart = script.split('|')[0].trim();
       console.log(`Executing script: ${scriptPart}`);
       // execute provided script and set the value from the script to an Environment Variable
-      exec(scriptPart, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`);
-        }
-        console.error(`stderr: ${stderr}`);
-        if (stdout){
-          core.exportVariable(script.split('|')[1].trim(),stdout.trim());
-        }        
-      }) 
+      core.exportVariable(script.split('|')[1].trim(), execSync(scriptPart).toString())
     } else {
       // execute provided script
       console.log(`Executing script: ${script}`);

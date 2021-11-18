@@ -1,7 +1,7 @@
 const core = require("@actions/core");
 const request  = require('./httpClient');
 const fs = require('fs');
-const { exec, execSync } = require("child_process");
+const { execSync } = require("child_process");
 const { stdout, stderr } = require("process");
 
 async function main() {
@@ -40,15 +40,7 @@ async function main() {
       const scriptPart = script.split('|')[0].trim();
       console.log(`Executing script: ${scriptPart}`);
       // execute provided script and set the value from the script to an Environment Variable
-      exec(scriptPart, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`);
-        }
-        console.error(`stderr: ${stderr}`);
-        if (stdout){
-          core.exportVariable(script.split('|')[1].trim(),stdout.trim());
-        }        
-      }) 
+      core.exportVariable(script.split('|')[1].trim(), execSync(scriptPart).toString())
     } else {
       // execute provided script
       console.log(`Executing script: ${script}`);
