@@ -11,8 +11,11 @@ async function main() {
   const roleId = core.getInput('roleId', { required: true });
   const secretId = core.getInput('secretId', { required: true });
   const rolesetPath = core.getInput('rolesetPath', { required: true });
+  const setBigQueryBiEngineReservation = core.getInput('setBigQueryBiEngineReservation', { required: false });
+  const googleProjectId = core.getInput('googleProjectId', { required: false });
+  var reservationBytesInGB = core.getInput('reservationBytesInGB', { required: false });
+  const location = core.getInput('location', { required: false });
   const script = core.getInput('script', { required: true });
-  const exportAsEnvVariable = core.getInput('exportAsEnvVariable', { required: false });
   const vaultAuthPayload = `{"role_id": "${roleId}", "secret_id": "${secretId}"}`;
 
   // authenticate to vault
@@ -36,11 +39,12 @@ async function main() {
       console.error(`stderr: ${stderr}`);
     });
 
-    if ((exportAsEnvVariable) && script.includes('|')) {
-      const scriptPart = script.split('|')[0].trim();
-      console.log(`Executing script: ${scriptPart}`);
-      // execute provided script and set the value from the script to an Environment Variable
-      core.exportVariable(script.split('|')[1].trim(), execSync(scriptPart).toString())
+    if (setBigQueryBiEngineReservation) {
+      const access_token = execSync('gcloud auth print-access-token').toString()
+      console.log(`Get the current BI Engine Reservation Value`);
+      var url = `https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation`
+      //Get the current BQ BI Engine Reservation
+      console.log(execSync(`curl ${url} --header 'Authorization: Bearer ${access_token}' --header 'Content-Type: application/json'`).toString)
     } else {
       // execute provided script
       console.log(`Executing script: ${script}`);
