@@ -4678,7 +4678,7 @@ async function main() {
   const rolesetPath = core.getInput('rolesetPath', { required: true });
   const setBigQueryBiEngineReservation = core.getInput('setBigQueryBiEngineReservation', { required: false });
   const googleProjectId = core.getInput('googleProjectId', { required: false });
-  var reservationBytesInGB = core.getInput('reservationBytesInGB', { required: false });
+  const reservationBytesInGB = core.getInput('reservationBytesInGB', { required: false });
   const location = core.getInput('location', { required: false });
   const script = core.getInput('script', { required: true });
   const vaultAuthPayload = `{"role_id": "${roleId}", "secret_id": "${secretId}"}`;
@@ -4711,7 +4711,7 @@ async function main() {
       var url = `https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation`
       var data = `{"name": "projects/${googleProjectId}/locations/${location}/biReservation", "size": ${sizeInBytes}}`
       //Set the specified BQ BI Engine Reservation
-      execSync(`curl ${url} --header 'Authorization: Bearer ${access_token}' --header 'Content-Type: application/json' --data ${data}`)
+      execSync(`curl ${url} --header 'Authorization: Bearer ${access_token}' --header 'Content-Type: application/json' --data '${data}'`)
     } else {
       // execute provided script
       console.log(`Executing script: ${script}`);
