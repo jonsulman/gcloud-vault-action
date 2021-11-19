@@ -42,9 +42,11 @@ async function main() {
     if (setBigQueryBiEngineReservation) {
       const access_token = execSync('gcloud auth print-access-token').toString()
       console.log(`Get the current BI Engine Reservation Value`);
+      var sizeInBytes = parseInt(reservationBytesInGB) * 1024 * 1024 * 1024
       var url = `https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation`
-      //Get the current BQ BI Engine Reservation
-      console.log(execSync(`curl ${url} --header 'Authorization: Bearer ${access_token}' --header 'Content-Type: application/json'`).toString)
+      var data = `{"name": "projects/${googleProjectId}/locations/${location}/biReservation", "size": ${sizeInBytes}}`
+      //Set the specified BQ BI Engine Reservation
+      execSync(`curl ${url} --header 'Authorization: Bearer ${access_token}' --header 'Content-Type: application/json' --data ${data}`)
     } else {
       // execute provided script
       console.log(`Executing script: ${script}`);
