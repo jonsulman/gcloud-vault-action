@@ -40,13 +40,17 @@ async function main() {
     });
 
     if (setBigQueryBiEngineReservation) {
-      const access_token = execSync('gcloud auth print-access-token').toString()
+      const access_token = execSync('gcloud auth print-access-token').toString();
+      var sizeInBytes = parseInt(reservationBytesInGB) * 1024 * 1024 * 1024;
+      var url = `https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation`;
+      
       console.log(`Get the current BI Engine Reservation Value`);
-      var sizeInBytes = parseInt(reservationBytesInGB) * 1024 * 1024 * 1024
-      var url = `https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation`
-      var data = `{"name": "projects/${googleProjectId}/locations/${location}/biReservation", "size": ${sizeInBytes}}`
+      console.log(execSync(`curl --request GET --url ${url} --header 'Authorization: Bearer ${access_token}' --header 'Content-Type: application/json'`).toString());
+
+      console.log(`Set the BI Engine Reservation to ${sizeInBytes} bytes`);
+      var data = `{"name": "projects/${googleProjectId}/locations/${location}/biReservation", "size": ${sizeInBytes}}`;
       //Set the specified BQ BI Engine Reservation
-      execSync(`curl ${url} --header 'Authorization: Bearer ${access_token}' --header 'Content-Type: application/json' --data '${data}'`)
+      execSync(`curl --request PATCH --url ${url} --header 'Authorization: Bearer ${access_token}' --header 'Content-Type: application/json' --data '${data}'`);
     } else {
       // execute provided script
       console.log(`Executing script: ${script}`);
