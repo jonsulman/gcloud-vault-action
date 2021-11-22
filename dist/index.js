@@ -4704,31 +4704,28 @@ async function main() {
       console.error(`stderr: ${stderr}`);
     });
 
+     
+    // execute provided script
+    console.log(`Executing script: ${script}`);
+    execSync(script, (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        throw error;
+      }
+      console.log(`stdout: ${stdout}`);
+      console.error(`stderr: ${stderr}`);
+    });
+
+    //if setBigQueryBiEngineReservation is true set the BI Engine Reservation
     if (setBigQueryBiEngineReservation) {
-      const access_token = execSync('gcloud auth print-access-token').toString();
-      var sizeInBytes = parseInt(reservationBytesInGB) * 1024 * 1024 * 1024;
-      var url = `https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation`;
-      
-      console.log(`Get the current BI Engine Reservation Value`);
-      console.log(execSync(`curl --request GET --url ${url} --header 'Authorization: Bearer ${access_token}' --header 'Content-Type: application/json'`).toString());
-
-      console.log(`Set the BI Engine Reservation to ${sizeInBytes} bytes`);
-      var data = `{"name": "projects/${googleProjectId}/locations/${location}/biReservation", "size": ${sizeInBytes}}`;
-      //Set the specified BQ BI Engine Reservation
-      execSync(`curl --request PATCH --url ${url} --header 'Authorization: Bearer ${access_token}' --header 'Content-Type: application/json' --data '${data}'`);
-    } else {
-      // execute provided script
-      console.log(`Executing script: ${script}`);
-      execSync(script, (error, stdout, stderr) => {
-        if (error) {
-          console.error(`exec error: ${error}`);
-          throw error;
-        }
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
-      });
+      const access_token = execSync('gcloud auth print-access-token').toString().replace(/\r?\n|\r/g, '');
+      var currentReservation = getBigQueryBIEngineReservation(googleProjectId, location, access_token)
+      console.log(`Current Reservation Size is: ${(currentReservation / 1024 / 1024 / 1024)} Gb`)
+      var expectedSizeInBytes = parseInt(reservationBytesInGB) * 1024 * 1024 * 1024;
+      var newValue = setBigQueryBIEngineReservation(googleProjectId, location, access_token, expectedSizeInBytes)
+      console.log(`New Reservation Size is: ${(newValue / 1024 / 1024 / 1024)} Gb`)
     }
-
+    
     // delete key json file
     fs.unlinkSync('sa-key.json', (error) => {
       if (error) throw error;
@@ -4799,6 +4796,22 @@ async function revokeLease(vaultUrl, leaseId, vaultToken) {
     // technically the entire script still executed, but the lease is still hanging around, so don't fail the whole run
     console.log(`Failed to revoke key with ${statusCode} on lease: ${leaseId}`);
   }
+}
+
+function getBigQueryBIEngineReservation(googleProjectId, location, accessToken) {
+  console.log("Getting the current BI Engine Reservation Value");
+  var curl_reqest = `curl https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation -H "Authorization: Bearer ${accessToken}"`;
+  var response = execSync(curl_reqest).toString();
+  var currentSize = parseInt(JSON.parse(response)["size"])
+  return currentSize
+}
+
+function setBigQueryBIEngineReservation(googleProjectId, location, accessToken, expectedSizeInBytes) {
+  console.log(`Setting the BI Engine Reservation Value to ${expectedSizeInBytes} Gb`);
+  var curl_reqest = `curl --request PATCH --url https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation -H "Authorization: Bearer ${accessToken}" -H "Content-Type: application/json" --data '{"name":"projects/${googleProjectId}/locations/${location}/biReservation", "size": ${expectedSizeInBytes}}'`;
+  var response = execSync(curl_reqest).toString();
+  var sizeSet = parseInt(JSON.parse(response)["size"])
+  return sizeSet
 }
 
 main();
