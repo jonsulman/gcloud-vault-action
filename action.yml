@@ -23,13 +23,13 @@ inputs:
     googleProjectId:
         description: 'Google Project ID'
         required: false
-    reservationBytes:
-        description: 'Set the Reservation Bytes in GB'
-        required: false
     location:
         description: 'Location for which the BI Engine reservation is to be set'
         required: false
         default: 'US'
+    reservationBytesInGB:
+        description: 'Set the Reservation Bytes in GB'
+        required: false
 runs:
     using: 'node12'
     main: 'dist/index.js'
