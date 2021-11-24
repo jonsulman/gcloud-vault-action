@@ -20,8 +20,8 @@ This method will take a Vault credential, authenticate to Vault, and get a priva
 ## Example
 
 ```yaml
-uses: GeneralMills/gcloud-vault-action@v0.1.1
-    with:
+uses: GeneralMills/gcloud-vault-action@v0.1.2
+with:
     vaultUrl: ${{ env.VAULT_URL }}
     roleId: ${{ secrets.ROLE_ID }}
     secretId: ${{ secrets.SECRET_ID }}
