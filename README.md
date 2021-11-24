@@ -3,7 +3,32 @@
 A GitHub Action to authenticate to gcloud via Vault and then execute a provided script.
 This method will take a Vault credential, authenticate to Vault, and get a private SA key from Vault using the provided GCP roleset. It will then will execute the provided script with that credential authenticated in the gcloud SDK. After the closure has been run, the lease on the private SA key in GCP will be revoked using the Vault GCP roleset.
 
-## Inputs
+## Inputs for GeneralMills/gcloud-vault-action@v0.1.1
+
+| Parameter       | Required | Info                                         |
+| --------------- | -------- | -------------------------------------------- |
+| `vaultUrl`      | `true`   | Vault URL                                    |
+| `roleId`        | `true`   | RoleId to authenticate to vault with         |
+| `secretId`      | `true`   | SecretId associated with the role provided   |
+| `rolesetPath`   | `true`   | Path to GCP roleset in vault                 |
+| `script`        | `true`   | script to run                                |
+
+## Example
+
+```yaml
+uses: GeneralMills/gcloud-vault-action@v0.1.1
+    with:
+    vaultUrl: ${{ env.VAULT_URL }}
+    roleId: ${{ secrets.ROLE_ID }}
+    secretId: ${{ secrets.SECRET_ID }}
+    rolesetPath: ${{ env.ROLESET_PATH }}
+    script: |
+        gcloud auth configure-docker gcr.io
+```
+
+`script` can execute multiple lines.
+
+## Inputs for GeneralMills/gcloud-vault-action@v0.2.0
 
 | Parameter                         | Required | Info                                                                                   |
 | --------------------------------- | -------- | -------------------------------------------------------------------------------------- |
@@ -20,7 +45,7 @@ This method will take a Vault credential, authenticate to Vault, and get a priva
 ## Example
 
 ```yaml
-uses: GeneralMills/gcloud-vault-action@v0.1.2
+uses: GeneralMills/gcloud-vault-action@v0.2.0
 with:
     vaultUrl: ${{ env.VAULT_URL }}
     roleId: ${{ secrets.ROLE_ID }}
@@ -31,7 +56,7 @@ with:
     location: ${{ env.location }}
     reservationBytesInGB: Integer value between 1 and 100
     script: |
-        gcloud auth configure-docker gcr.io
+        echo 'Setting the BI Engine Reservation'
 ```
 
 `script` can execute multiple lines.
