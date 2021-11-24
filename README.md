@@ -36,5 +36,4 @@ uses: GeneralMills/gcloud-vault-action@v0.1.1
 
 `script` can execute multiple lines.
 
-When `setBigQueryBiEngineReservation` is set to true the github action also expects the `googleProjectId` and `reservationBytesInGB` to be passed as a parameter to the script. The `location` parameter is set to a default value of US (multiple region in United States). If the location needs to be more specific pass the appropriate value 
-e.g (us-west2, us-east4)
+When `setBigQueryBiEngineReservation` is set to true the github action also expects the `googleProjectId` and `reservationBytesInGB` to be passed as a parameter to the script. The `location` parameter is set to a default value of US (multiple region in United States). If the location needs to be more specific pass an appropriate value e.g (us-west2, us-east4). The `reservationBytesInGB` parameter expects an Integer value, if 1.7 is passed it will treat the value as 1. Setting the value to 0 would delete the BI Engine reservation.
