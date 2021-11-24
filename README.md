@@ -11,9 +11,9 @@ This method will take a Vault credential, authenticate to Vault, and get a priva
 | `roleId`                          | `true`   | RoleId to authenticate to vault with                                                   |
 | `secretId`                        | `true`   | SecretId associated with the role provided                                             |
 | `rolesetPath`                     | `true`   | Path to GCP roleset in vault                                                           |
-| `setBigQueryBiEngineReservation`  | `false`  | Boolean value to set BI Engine Reservation (default = false)                           |
+| `setBigQueryBiEngineReservation`  | `false`  | Boolean value to set BI Engine Reservation (default=`'false'`)                         |
 | `googleProjectId`                 | `false`  | The google project id for setting the reservation                                      |
-| `location`                        | `false`  | Location for setting the reservation and where the data will be stored(default = `US`) |
+| `location`                        | `false`  | Location for setting the reservation and where the data will be stored(default=`'US'`) |
 | `reservationBytesInGB`            | `false`  | Size of BI Engine Reservation in GB                                                    |
 | `script`                          | `true`   | script to run                                                                          |
 
@@ -26,7 +26,7 @@ uses: GeneralMills/gcloud-vault-action@v0.1.1
     roleId: ${{ secrets.ROLE_ID }}
     secretId: ${{ secrets.SECRET_ID }}
     rolesetPath: ${{ env.ROLESET_PATH }}
-    setBigQueryBiEngineReservation: true
+    setBigQueryBiEngineReservation: 'true'
     googleProjectId: ${{ env.PROJECT_ID }}
     location: ${{ env.location }}
     reservationBytesInGB: Integer value between 1 and 100
