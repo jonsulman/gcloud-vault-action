@@ -56,8 +56,7 @@ async function main() {
       var currentReservation = getBigQueryBIEngineReservation(googleProjectId, location, access_token)
       console.log(`Current Reservation Size is: ${(currentReservation / 1024 / 1024 / 1024)} Gb`)
       
-      var expectedSizeInBytes = parseInt(reservationBytesInGB) * 1024 * 1024 * 1024;
-      setBigQueryBIEngineReservation(googleProjectId, location, access_token, expectedSizeInBytes)
+      setBigQueryBIEngineReservation(googleProjectId, location, access_token, reservationBytesInGB)
     }
     
     // delete key json file
@@ -134,15 +133,20 @@ async function revokeLease(vaultUrl, leaseId, vaultToken) {
 
 function getBigQueryBIEngineReservation(googleProjectId, location, accessToken) {
   console.log("Getting the current BI Engine Reservation Value");
-  var curl_reqest = `curl https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation -H "Authorization: Bearer ${accessToken}"`;
+  var curl_reqest = `curl https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation
+  --header "Authorization: Bearer ${accessToken}"`;
   var response = execSync(curl_reqest).toString();
   var currentSize = parseInt(JSON.parse(response)["size"])
   return currentSize
 }
 
-function setBigQueryBIEngineReservation(googleProjectId, location, accessToken, expectedSizeInBytes) {
-  console.log(`Setting the BI Engine Reservation Value to ${expectedSizeInBytes} bytes`);
-  var curl_reqest = `curl --request PATCH --url https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation -H "Authorization: Bearer ${accessToken}" -H "Content-Type: application/json" --data '{"name":"projects/${googleProjectId}/locations/${location}/biReservation", "size": ${expectedSizeInBytes}}'`;
+function setBigQueryBIEngineReservation(googleProjectId, location, accessToken, reservationBytesInGB) {
+  console.log(`Setting the BI Engine Reservation Value to ${reservationBytesInGB} Gb`);
+  var expectedSizeInBytes = parseInt(reservationBytesInGB) * 1024 * 1024 * 1024;
+  var curl_reqest = `curl --request PATCH 
+  --url https://bigqueryreservation.googleapis.com/v1/projects/${googleProjectId}/locations/${location}/biReservation
+  --header "Authorization: Bearer ${accessToken}" --header "Content-Type: application/json"
+  --data '{"name":"projects/${googleProjectId}/locations/${location}/biReservation", "size": ${expectedSizeInBytes}}'`;
   var response = execSync(curl_reqest).toString();
   var sizeSet = parseInt(JSON.parse(response)["size"])
   console.log(`New Reservation Size is: ${(sizeSet / 1024 / 1024 / 1024)} Gb`)
