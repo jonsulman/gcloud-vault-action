@@ -16,6 +16,20 @@ inputs:
     script:
         description: 'script to run'
         required: true
+    setBigQueryBiEngineReservation:
+        description: 'Boolean value to allow setting the BigQuery BI Engine Reservation'
+        required: false
+        default: 'false'
+    googleProjectId:
+        description: 'Google Project ID'
+        required: false
+    location:
+        description: 'Location for which the BI Engine reservation is to be set'
+        required: false
+        default: 'US'
+    reservationBytesInGB:
+        description: 'Set the Reservation Bytes in GB'
+        required: false
 runs:
     using: 'node12'
     main: 'dist/index.js'
