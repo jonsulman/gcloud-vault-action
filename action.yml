@@ -30,6 +30,10 @@ inputs:
     reservationBytesInGB:
         description: 'Set the Reservation Bytes in GB'
         required: false
+    printScriptOutput:
+        description: 'Whether to print stdout output from the script to the GitHub UI'
+        required: false
+        default: 'false'
 runs:
     using: 'node12'
     main: 'dist/index.js'

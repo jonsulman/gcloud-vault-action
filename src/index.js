@@ -2,7 +2,6 @@ const core = require("@actions/core");
 const request  = require('./httpClient');
 const fs = require('fs');
 const { execSync } = require("child_process");
-const { stdout, stderr } = require("process");
 
 async function main() {
 
@@ -15,7 +14,9 @@ async function main() {
   const googleProjectId = core.getInput('googleProjectId', { required: false });
   const location = core.getInput('location', { required: false });
   const reservationBytesInGB = core.getInput('reservationBytesInGB', { required: false });
+  const printScriptOutput = core.getInput('printScriptOutput', { required: false }).toString().toLowerCase() === 'true';
   const script = core.getInput('script', { required: true });
+
   const vaultAuthPayload = `{"role_id": "${roleId}", "secret_id": "${secretId}"}`;
 
   // authenticate to vault
@@ -29,26 +30,17 @@ async function main() {
       if (error) throw error;
     });
 
+    // provide service account private key json file to client libraries
+    // https://cloud.google.com/bigquery/docs/reference/libraries#setting_up_authentication
+    process.env.GOOGLE_APPLICATION_CREDENTIALS = './sa-key.json';
+
     // auth to GCP with service account
-    execSync('gcloud auth activate-service-account --key-file sa-key.json', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        throw error;
-      }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
-    });
-     
+    execSync('gcloud auth activate-service-account --key-file sa-key.json');
+
     // execute provided script
+    const execSyncOptions = { stdio: printScriptOutput ? 'inherit' : undefined };
     console.log(`Executing script: ${script}`);
-    execSync(script, (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        throw error;
-      }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
-    });
+    execSync(script, execSyncOptions);
 
     //if setBigQueryBiEngineReservation is true set the BI Engine Reservation
     if (setBigQueryBiEngineReservation) {

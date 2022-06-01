@@ -28,7 +28,7 @@ with:
 
 `script` can execute multiple lines.
 
-## Inputs for GeneralMills/gcloud-vault-action@v0.2.0
+## Inputs for GeneralMills/gcloud-vault-action@v0.2.0+
 
 | Parameter                         | Required | Info                                                                                   |
 | --------------------------------- | -------- | -------------------------------------------------------------------------------------- |
@@ -40,6 +40,7 @@ with:
 | `googleProjectId`                 | `false`  | The google project id for setting the reservation                                      |
 | `location`                        | `false`  | Location for setting the reservation and where the data will be stored(default=`'US'`) |
 | `reservationBytesInGB`            | `false`  | Size of BI Engine Reservation in GB                                                    |
+| `printScriptOutput` | `false`  | Whether to print stdout output from the script to the GitHub UI (default=`'false'`) (requires gcloud-vault-action@v0.3.0+) |
 | `script`                          | `true`   | script to run                                                                          |
 
 ## Example
