@@ -10,7 +10,7 @@ async function main() {
   const roleId = core.getInput('roleId', { required: true });
   const secretId = core.getInput('secretId', { required: true });
   const rolesetPath = core.getInput('rolesetPath', { required: true });
-  const setBigQueryBiEngineReservation = core.getInput('setBigQueryBiEngineReservation', { required: false });
+  const setBigQueryBiEngineReservation = core.getInput('setBigQueryBiEngineReservation', { required: false }).toString().toLowerCase() === 'true';
   const googleProjectId = core.getInput('googleProjectId', { required: false });
   const location = core.getInput('location', { required: false });
   const reservationBytesInGB = core.getInput('reservationBytesInGB', { required: false });
